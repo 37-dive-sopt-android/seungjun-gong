@@ -5,6 +5,7 @@
 
     <!--Label       -->
     <string name="sign_in_title">Welcome To SOPT</string>
+    <string name="sign_up_title">SIGN UP</string>
     <string name="id_label">ID</string>
     <string name="password_label">PW</string>
     <string name="nickname_label">NICKNAME</string>
@@ -19,5 +20,8 @@
     <!--Button      -->
     <string name="sign_in_button_text">Welcome To SOPT</string>
     <string name="sign_up_button_text">회원가입하기</string>
+
+    <!--Error    -->
+    <string name="error_text">회원 정보를 입력해주세요</string>
 
 </resources>
