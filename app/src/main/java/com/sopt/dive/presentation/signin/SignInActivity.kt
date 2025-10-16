@@ -3,13 +3,18 @@ package com.sopt.dive.presentation.signin
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import android.graphics.Color as AndroidColor
 import com.sopt.dive.core.designsystem.theme.DiveTheme
 import com.sopt.dive.presentation.main.MainActivity
 import com.sopt.dive.presentation.signup.SignUpActivity
@@ -31,12 +36,16 @@ class SignInActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        enableEdgeToEdge(
+            SystemBarStyle.light(AndroidColor.TRANSPARENT, AndroidColor.TRANSPARENT),
+            SystemBarStyle.light(AndroidColor.TRANSPARENT, AndroidColor.TRANSPARENT)
+        )
         setContent {
-            DiveTheme {
+            DiveTheme(darkTheme = false) {
                 Scaffold(
                     modifier = Modifier
                         .fillMaxSize(),
+                    containerColor = Color.White,
                 ) { innerPadding ->
                     SignInRoute(
                         receivedUserId = receivedUserId,
@@ -44,7 +53,9 @@ class SignInActivity : ComponentActivity() {
                         navigateToSignUp = ::navigateToSignUp,
                         navigateToMain = ::navigateToMain,
                         modifier = Modifier
-                            .padding(innerPadding),
+                            .padding(innerPadding)
+                            .consumeWindowInsets(innerPadding)
+                            .imePadding(),
                     )
                 }
             }
@@ -56,6 +67,7 @@ class SignInActivity : ComponentActivity() {
             signUpLauncher.launch(it)
         }
     }
+
     private fun navigateToMain() {
         val intent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK

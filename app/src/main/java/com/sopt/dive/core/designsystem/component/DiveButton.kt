@@ -13,8 +13,8 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.sopt.dive.core.designsystem.theme.DiveTheme
 import com.sopt.dive.core.util.NoRippleInteractionSource
-import com.sopt.dive.ui.theme.DiveTheme
 
 @Composable
 fun DiveButton(
