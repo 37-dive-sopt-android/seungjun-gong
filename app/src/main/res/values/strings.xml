@@ -2,4 +2,22 @@
     <string name="app_name">dive</string>
     <string name="title_activity_sign_in">SignInActivity</string>
     <string name="title_activity_sign_up">SignUpActivity</string>
+
+    <!--Label       -->
+    <string name="sign_in_title">Welcome To SOPT</string>
+    <string name="id_label">ID</string>
+    <string name="password_label">PW</string>
+    <string name="nickname_label">NICKNAME</string>
+    <string name="mbti_label">MBTI</string>
+
+    <!--TextField   -->
+    <string name="id_text_field_placeholder">아이디를 입력해주세요</string>
+    <string name="password_text_field_placeholder">비밀번호를 입력해주세요</string>
+    <string name="nickname_text_field_placeholder">닉네임을 입력해주세요</string>
+    <string name="mbti_text_field_placeholder">mbti를 입력해주세요</string>
+
+    <!--Button      -->
+    <string name="sign_in_button_text">Welcome To SOPT</string>
+    <string name="sign_up_button_text">회원가입하기</string>
+
 </resources>
