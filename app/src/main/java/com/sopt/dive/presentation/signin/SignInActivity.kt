@@ -1,14 +1,15 @@
-package com.sopt.dive
+package com.sopt.dive.presentation.signin
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,11 +19,16 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sopt.dive.R
+import com.sopt.dive.core.designsystem.component.DiveButton
 import com.sopt.dive.core.designsystem.component.LabelTextField
+import com.sopt.dive.core.designsystem.component.PasswordTextField
 import com.sopt.dive.core.designsystem.theme.DiveTheme
 
 class SignInActivity : ComponentActivity() {
@@ -35,7 +41,10 @@ class SignInActivity : ComponentActivity() {
                     modifier = Modifier
                         .fillMaxSize(),
                 ) { innerPadding ->
-                    innerPadding
+                    SignInRoute(
+                        modifier = Modifier
+                            .padding(innerPadding),
+                    )
                 }
             }
         }
@@ -56,7 +65,6 @@ private fun SignInRoute(
         onPasswordChange = { password = it },
         modifier = modifier,
     )
-
 }
 
 @Composable
@@ -89,29 +97,84 @@ private fun SignInScreen(
                 .fillMaxWidth(),
         ) {
             LabelTextField(
-                label = "ID",
+                label = stringResource(R.string.id_label),
                 value = userId,
                 onValueChange = onUserIdChange,
-                placeholder = "아이디를 입력해주세요",
+                placeholder = stringResource(R.string.id_text_field_placeholder),
                 modifier = Modifier
                     .padding(bottom = 30.dp),
             )
 
-            LabelTextField(
-                label = "PW",
-                value = password,
-                onValueChange = onPasswordChange,
-                placeholder = "비밀번호를 입력해주세요",
+            LabelPasswordTextField(
+                label = stringResource(R.string.password_label),
+                password = password,
+                onPasswordChange = onPasswordChange,
+                placeholder = stringResource(R.string.password_text_field_placeholder),
+                modifier = Modifier
+                    .padding(bottom = 30.dp),
             )
         }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        DiveButton(
+            buttonText = stringResource(R.string.sign_in_button_text),
+            onClick = {},
+            modifier = Modifier
+                .fillMaxWidth()
+        )
+
+        Text(
+            text = stringResource(R.string.sign_up_button_text),
+            modifier = Modifier
+                .padding(
+                    top = 5.dp,
+                    bottom = 40.dp
+                ),
+            color = Color.LightGray,
+            fontSize = 14.sp,
+        )
     }
+}
 
+@Composable
+private fun LabelPasswordTextField(
+    label: String,
+    password: String,
+    onPasswordChange: (String) -> Unit,
+    placeholder: String,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth(),
+    ) {
+        Text(
+            text = label,
+            fontSize = 24.sp,
+        )
 
+        PasswordTextField(
+            value = password,
+            onValueChange = onPasswordChange,
+            placeholder = placeholder,
+            modifier = Modifier
+                .padding(
+                    top = 5.dp,
+                    bottom = 3.dp,
+                )
+        )
+
+        HorizontalDivider(
+            thickness = 1.dp,
+            color = Color.Black,
+        )
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun SignInScreenPreview() {
+private fun SignInScreenPreview() {
     DiveTheme {
         SignInScreen(
             userId = "",
