@@ -1,37 +1,34 @@
 package com.sopt.dive.presentation.signin
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.sopt.dive.R
-import com.sopt.dive.core.designsystem.component.DiveButton
-import com.sopt.dive.core.designsystem.component.LabelTextField
-import com.sopt.dive.core.designsystem.component.PasswordTextField
 import com.sopt.dive.core.designsystem.theme.DiveTheme
+import com.sopt.dive.presentation.main.MainActivity
+import com.sopt.dive.presentation.signup.SignUpActivity
 
 class SignInActivity : ComponentActivity() {
+    private var receivedUserId: String = ""
+    private var receivedPassword: String = ""
+
+    private val signUpLauncher =
+        registerForActivityResult(
+            contract = ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            if (result.resultCode == RESULT_OK) {
+                val data = result.data
+                receivedUserId = data?.getStringExtra("USER_ID").orEmpty()
+                receivedPassword = data?.getStringExtra("PASSWORD").orEmpty()
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -42,6 +39,10 @@ class SignInActivity : ComponentActivity() {
                         .fillMaxSize(),
                 ) { innerPadding ->
                     SignInRoute(
+                        receivedUserId = receivedUserId,
+                        receivedPassword = receivedPassword,
+                        navigateToSignUp = ::navigateToSignUp,
+                        navigateToMain = ::navigateToMain,
                         modifier = Modifier
                             .padding(innerPadding),
                     )
@@ -49,138 +50,16 @@ class SignInActivity : ComponentActivity() {
             }
         }
     }
-}
 
-@Composable
-private fun SignInRoute(
-    modifier: Modifier = Modifier,
-) {
-    var userId by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
-
-    SignInScreen(
-        userId = userId,
-        onUserIdChange = { userId = it },
-        password = password,
-        onPasswordChange = { password = it },
-        modifier = modifier,
-    )
-}
-
-@Composable
-private fun SignInScreen(
-    userId: String,
-    onUserIdChange: (String) -> Unit,
-    password: String,
-    onPasswordChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Text(
-            text = "Welcome To SOPT",
-            modifier = Modifier
-                .padding(
-                    top = 40.dp,
-                    bottom = 40.dp,
-                ),
-            fontSize = 28.sp,
-            fontWeight = FontWeight.W900,
-        )
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth(),
-        ) {
-            LabelTextField(
-                label = stringResource(R.string.id_label),
-                value = userId,
-                onValueChange = onUserIdChange,
-                placeholder = stringResource(R.string.id_text_field_placeholder),
-                modifier = Modifier
-                    .padding(bottom = 30.dp),
-            )
-
-            LabelPasswordTextField(
-                label = stringResource(R.string.password_label),
-                password = password,
-                onPasswordChange = onPasswordChange,
-                placeholder = stringResource(R.string.password_text_field_placeholder),
-                modifier = Modifier
-                    .padding(bottom = 30.dp),
-            )
+    private fun navigateToSignUp() {
+        Intent(this, SignUpActivity::class.java).also {
+            signUpLauncher.launch(it)
         }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        DiveButton(
-            buttonText = stringResource(R.string.sign_in_button_text),
-            onClick = {},
-            modifier = Modifier
-                .fillMaxWidth()
-        )
-
-        Text(
-            text = stringResource(R.string.sign_up_button_text),
-            modifier = Modifier
-                .padding(
-                    top = 5.dp,
-                    bottom = 40.dp
-                ),
-            color = Color.LightGray,
-            fontSize = 14.sp,
-        )
     }
-}
-
-@Composable
-private fun LabelPasswordTextField(
-    label: String,
-    password: String,
-    onPasswordChange: (String) -> Unit,
-    placeholder: String,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth(),
-    ) {
-        Text(
-            text = label,
-            fontSize = 24.sp,
-        )
-
-        PasswordTextField(
-            value = password,
-            onValueChange = onPasswordChange,
-            placeholder = placeholder,
-            modifier = Modifier
-                .padding(
-                    top = 5.dp,
-                    bottom = 3.dp,
-                )
-        )
-
-        HorizontalDivider(
-            thickness = 1.dp,
-            color = Color.Black,
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun SignInScreenPreview() {
-    DiveTheme {
-        SignInScreen(
-            userId = "",
-            onUserIdChange = {},
-            password = "",
-            onPasswordChange = {},
-        )
+    private fun navigateToMain() {
+        val intent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+        startActivity(intent)
     }
 }

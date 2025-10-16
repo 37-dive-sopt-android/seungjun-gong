@@ -1,5 +1,6 @@
 package com.sopt.dive.presentation.signin
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -79,14 +80,13 @@ private fun SignInScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(30.dp),
         ) {
             LabelTextField(
                 label = stringResource(R.string.id_label),
                 value = userId,
                 onValueChange = onUserIdChange,
                 placeholder = stringResource(R.string.id_text_field_placeholder),
-                modifier = Modifier
-                    .padding(bottom = 30.dp),
             )
 
             LabelPasswordTextField(
@@ -94,8 +94,6 @@ private fun SignInScreen(
                 password = password,
                 onPasswordChange = onPasswordChange,
                 placeholder = stringResource(R.string.password_text_field_placeholder),
-                modifier = Modifier
-                    .padding(bottom = 30.dp),
             )
         }
 
