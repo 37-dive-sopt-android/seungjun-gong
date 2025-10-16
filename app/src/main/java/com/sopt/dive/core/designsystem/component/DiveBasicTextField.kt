@@ -1,6 +1,7 @@
 package com.sopt.dive.core.designsystem.component
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -42,22 +43,28 @@ fun DiveBasicTextField(
     visualTransformation = visualTransformation,
     cursorBrush = SolidColor(textColor),
 ) { innerTextField ->
-    Box(
+    Row(
         modifier = Modifier
             .fillMaxWidth(),
-        contentAlignment = Alignment.TopStart,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (value.isEmpty()) {
-            Text(
-                text = placeholder,
-                style = textStyle,
-                color = placeholderColor,
-            )
+        Box(
+            modifier = Modifier
+                .weight(1f),
+            contentAlignment = Alignment.TopStart,
+        ) {
+            if (value.isEmpty()) {
+                Text(
+                    text = placeholder,
+                    style = textStyle,
+                    color = placeholderColor,
+                )
+            }
+            innerTextField()
         }
-        innerTextField()
-    }
 
-    trailingIcon()
+        trailingIcon()
+    }
 }
 
 @Preview(showBackground = true)
