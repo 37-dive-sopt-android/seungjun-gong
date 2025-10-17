@@ -36,7 +36,10 @@ class UserDataStore(private val context: Context) {
 
     suspend fun clearUserData() {
         context.dataStore.edit { prefs ->
-            prefs.clear()
+            prefs.remove(USER_ID_KEY)
+            prefs.remove(PASSWORD_KEY)
+            prefs.remove(NICKNAME_KEY)
+            prefs.remove(MBTI_KEY)
         }
     }
 
