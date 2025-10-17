@@ -12,25 +12,31 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import android.graphics.Color as AndroidColor
 import com.sopt.dive.core.designsystem.theme.DiveTheme
+import com.sopt.dive.core.local.datastore.UserDataStore
+import com.sopt.dive.core.util.showToast
+import com.sopt.dive.presentation.DiveApplication
 import com.sopt.dive.presentation.main.MainActivity
 import com.sopt.dive.presentation.signup.SignUpActivity
+import android.graphics.Color as AndroidColor
 
 class SignInActivity : ComponentActivity() {
-    private var receivedUserId: String = ""
-    private var receivedPassword: String = ""
-
+    private var resultUserState: Pair<String, String>? by mutableStateOf(null)
     private val signUpLauncher =
         registerForActivityResult(
             contract = ActivityResultContracts.StartActivityForResult()
         ) { result ->
             if (result.resultCode == RESULT_OK) {
                 val data = result.data
-                receivedUserId = data?.getStringExtra("USER_ID").orEmpty()
-                receivedPassword = data?.getStringExtra("PASSWORD").orEmpty()
+                resultUserState = Pair(
+                    data?.getStringExtra("USER_ID").orEmpty(),
+                    data?.getStringExtra("PASSWORD").orEmpty()
+                )
             }
         }
 
@@ -40,6 +46,9 @@ class SignInActivity : ComponentActivity() {
             SystemBarStyle.light(AndroidColor.TRANSPARENT, AndroidColor.TRANSPARENT),
             SystemBarStyle.light(AndroidColor.TRANSPARENT, AndroidColor.TRANSPARENT)
         )
+
+        val dataStore = (application as DiveApplication).userDataStore
+
         setContent {
             DiveTheme(darkTheme = false) {
                 Scaffold(
@@ -48,8 +57,8 @@ class SignInActivity : ComponentActivity() {
                     containerColor = Color.White,
                 ) { innerPadding ->
                     SignInRoute(
-                        receivedUserId = receivedUserId,
-                        receivedPassword = receivedPassword,
+                        resultUserState = resultUserState,
+                        userDataStore = dataStore,
                         navigateToSignUp = ::navigateToSignUp,
                         navigateToMain = ::navigateToMain,
                         modifier = Modifier

@@ -5,18 +5,22 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,26 +31,63 @@ import com.sopt.dive.core.designsystem.component.DiveButton
 import com.sopt.dive.core.designsystem.component.LabelTextField
 import com.sopt.dive.core.designsystem.component.PasswordTextField
 import com.sopt.dive.core.designsystem.theme.DiveTheme
+import com.sopt.dive.core.local.datastore.UserDataStore
 import com.sopt.dive.core.util.noRippleClickable
+import com.sopt.dive.core.util.showToast
+import kotlinx.coroutines.launch
 
 @Composable
 fun SignInRoute(
-    receivedUserId: String,
-    receivedPassword: String,
+    resultUserState: Pair<String, String>?,
+    userDataStore: UserDataStore,
     navigateToSignUp: () -> Unit,
     navigateToMain: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var userId by rememberSaveable { mutableStateOf(receivedUserId) }
-    var password by rememberSaveable { mutableStateOf(receivedPassword) }
+    var userId by rememberSaveable { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
+
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    LaunchedEffect(resultUserState) {
+        if (resultUserState != null) {
+            userId = resultUserState.first
+            password = resultUserState.second
+        }
+    }
+
+    // 자동 로그인
+    LaunchedEffect(Unit) {
+        val savedUserData = userDataStore.getUserData()
+        if (savedUserData != null) {
+            navigateToMain()
+        }
+    }
 
     SignInScreen(
         userId = userId,
         onUserIdChange = { userId = it },
         password = password,
         onPasswordChange = { password = it },
-        onSignInClick = navigateToSignUp,
-        onSignUpClick = navigateToMain,
+        onSignInClick = {
+            if (userId.isBlank() || password.isBlank()) {
+                context.showToast("ID와 비밀번호를 입력해주세요")
+                return@SignInScreen
+            }
+
+            coroutineScope.launch {
+                val savedUserData = userDataStore.getUserData()
+
+                if (savedUserData != null && savedUserData.userId == userId && savedUserData.password == password) {
+                    context.showToast("로그인에 성공했습니다")
+                    navigateToMain()
+                } else {
+                    context.showToast("ID 또는 비밀번호가 일치하지 않습니다")
+                }
+            }
+        },
+        onSignUpClick = navigateToSignUp,
         modifier = modifier,
     )
 }
@@ -64,6 +105,7 @@ private fun SignInScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
