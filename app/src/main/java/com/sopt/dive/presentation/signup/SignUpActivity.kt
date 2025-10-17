@@ -57,6 +57,6 @@ class SignUpActivity : ComponentActivity() {
         }
         setResult(RESULT_OK, resultIntent)
         finish()
-        this.showToast("로그인 성공")
+        this.showToast("회원가입 성공")
     }
 }
