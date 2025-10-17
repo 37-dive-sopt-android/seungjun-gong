@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -46,6 +47,7 @@ fun SignInRoute(
 ) {
     var userId by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(true) }
 
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -62,7 +64,13 @@ fun SignInRoute(
         val savedUserData = userDataStore.getUserData()
         if (savedUserData != null) {
             navigateToMain()
+        } else {
+            isLoading = false
         }
+    }
+
+    if (isLoading) {
+        return@SignInRoute
     }
 
     SignInScreen(

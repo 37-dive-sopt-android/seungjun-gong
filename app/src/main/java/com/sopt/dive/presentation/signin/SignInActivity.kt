@@ -18,8 +18,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.sopt.dive.core.designsystem.theme.DiveTheme
-import com.sopt.dive.core.local.datastore.UserDataStore
-import com.sopt.dive.core.util.showToast
 import com.sopt.dive.presentation.DiveApplication
 import com.sopt.dive.presentation.main.MainActivity
 import com.sopt.dive.presentation.signup.SignUpActivity

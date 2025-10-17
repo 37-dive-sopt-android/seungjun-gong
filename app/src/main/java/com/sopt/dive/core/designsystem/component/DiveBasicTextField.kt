@@ -27,7 +27,7 @@ fun DiveBasicTextField(
     placeholder: String,
     placeholderColor: Color,
     modifier: Modifier = Modifier,
-    imeAction: ImeAction = ImeAction.Done,
+    imeAction: ImeAction = ImeAction.Next,
     onDoneAction: () -> Unit = {},
     lineLimits: Int = 1,
     visualTransformation: VisualTransformation = VisualTransformation.None,
