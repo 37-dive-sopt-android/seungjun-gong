@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -27,11 +28,15 @@ import com.sopt.dive.R
 import com.sopt.dive.core.designsystem.component.DiveButton
 import com.sopt.dive.core.designsystem.component.LabelTextField
 import com.sopt.dive.core.designsystem.theme.DiveTheme
+import com.sopt.dive.core.local.datastore.UserData
+import com.sopt.dive.core.local.datastore.UserDataStore
 import com.sopt.dive.core.util.FormFieldValidator
 import com.sopt.dive.core.util.showToast
+import kotlinx.coroutines.launch
 
 @Composable
 fun SignUpRoute(
+    userDataStore: UserDataStore,
     navigateToSignIn: (String, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -53,6 +58,7 @@ fun SignUpRoute(
             userMbti.isNotBlank() && userMbtiError.isBlank()
 
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
     SignUpScreen(
         userId = userId,
@@ -84,7 +90,17 @@ fun SignUpRoute(
                 FormFieldValidator.validateMbti(it) else ""
         },
         onSignUpClick = {
-            if (signUpEnabled) navigateToSignIn(userId, password)
+            if (signUpEnabled)
+                coroutineScope.launch {
+                    val newUser = UserData(
+                        userId = userId,
+                        password = password,
+                        nickname = nickname,
+                        mbti = userMbti.uppercase(),
+                    )
+                    userDataStore.setUserData(newUser)
+                    navigateToSignIn(userId, password)
+                }
             else with(context) { showToast(getString(R.string.error_text)) }
         },
         modifier = modifier,

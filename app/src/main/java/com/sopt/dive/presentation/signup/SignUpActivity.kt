@@ -13,8 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.core.view.WindowCompat
 import com.sopt.dive.core.designsystem.theme.DiveTheme
+import com.sopt.dive.core.util.showToast
+import com.sopt.dive.presentation.DiveApplication
 import android.graphics.Color as AndroidColor
 
 class SignUpActivity : ComponentActivity() {
@@ -25,6 +26,8 @@ class SignUpActivity : ComponentActivity() {
             SystemBarStyle.light(AndroidColor.TRANSPARENT, AndroidColor.TRANSPARENT)
         )
 
+        val dataStore = (application as DiveApplication).userDataStore
+
         setContent {
             DiveTheme(darkTheme = false) {
                 Scaffold(
@@ -33,6 +36,7 @@ class SignUpActivity : ComponentActivity() {
                     containerColor = Color.White,
                 ) { innerPadding ->
                     SignUpRoute(
+                        userDataStore = dataStore,
                         navigateToSignIn = { id, pw ->
                             navigateToSignIn(id, pw)
                         },
@@ -53,5 +57,6 @@ class SignUpActivity : ComponentActivity() {
         }
         setResult(RESULT_OK, resultIntent)
         finish()
+        this.showToast("로그인 성공")
     }
 }
