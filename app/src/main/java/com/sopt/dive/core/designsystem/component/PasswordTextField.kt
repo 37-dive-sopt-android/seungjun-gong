@@ -51,7 +51,7 @@ fun PasswordTextField(
         textColor = textColor,
         placeholder = placeholder,
         placeholderColor = placeholderColor,
-        modifier = Modifier
+        modifier = modifier
             .padding(
                 top = 5.dp,
                 bottom = 3.dp,
