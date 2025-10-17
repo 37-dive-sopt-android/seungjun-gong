@@ -1,44 +1,42 @@
 package com.sopt.dive.presentation.main
 
+import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import com.sopt.dive.core.designsystem.theme.DiveTheme
+import com.sopt.dive.presentation.DiveApplication
+import com.sopt.dive.presentation.signin.SignInActivity
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        enableEdgeToEdge(
+            SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT),
+            SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+        )
+
+        val dataStore = (application as DiveApplication).userDataStore
+
         setContent {
             DiveTheme {
-//                MainRoute()
+                MainRoute(
+                    userDataStore = dataStore,
+                    navigateToSignIn = ::navigateToSignIn,
+                    modifier = Modifier,
+                )
             }
         }
     }
-}
 
-@Composable
-private fun MainRoute(
-    name: String, modifier: Modifier = Modifier
-) {
-
-}
-
-@Composable
-private fun MainScreen(
-
-) {
-
-}
-
-@Preview(showBackground = true)
-@Composable
-fun MainScreenPreview() {
-    DiveTheme {
-        MainScreen()
+    private fun navigateToSignIn() {
+        val intent = Intent(this, SignInActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+        }
+        startActivity(intent)
     }
 }
