@@ -74,7 +74,6 @@ fun PasswordTextField(
             }
         }
     )
-
 }
 
 @Preview(showBackground = true)
