@@ -44,8 +44,6 @@ fun DiveBasicTextField(
     cursorBrush = SolidColor(textColor),
 ) { innerTextField ->
     Row(
-        modifier = Modifier
-            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(
