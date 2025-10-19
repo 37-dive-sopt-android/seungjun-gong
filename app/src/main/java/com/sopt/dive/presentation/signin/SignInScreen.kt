@@ -32,15 +32,14 @@ import com.sopt.dive.core.designsystem.component.DiveButton
 import com.sopt.dive.core.designsystem.component.LabelTextField
 import com.sopt.dive.core.designsystem.component.PasswordTextField
 import com.sopt.dive.core.designsystem.theme.DiveTheme
-import com.sopt.dive.core.local.datastore.UserDataStore
 import com.sopt.dive.core.util.noRippleClickable
 import com.sopt.dive.core.util.showToast
+import com.sopt.dive.presentation.DiveApplication
 import kotlinx.coroutines.launch
 
 @Composable
 fun SignInRoute(
     resultUserState: Pair<String, String>?,
-    userDataStore: UserDataStore,
     navigateToSignUp: () -> Unit,
     navigateToMain: () -> Unit,
     modifier: Modifier = Modifier,
@@ -51,6 +50,8 @@ fun SignInRoute(
 
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
+
+    val userDataStore = (context.applicationContext as DiveApplication).userDataStore
 
     LaunchedEffect(resultUserState) {
         if (resultUserState != null) {
@@ -70,7 +71,7 @@ fun SignInRoute(
     }
 
     if (isLoading) {
-        return@SignInRoute
+        return
     }
 
     SignInScreen(

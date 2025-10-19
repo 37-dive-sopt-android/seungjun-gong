@@ -34,14 +34,13 @@ import com.sopt.dive.core.designsystem.component.DiveButton
 import com.sopt.dive.core.designsystem.component.LabelTextField
 import com.sopt.dive.core.designsystem.theme.DiveTheme
 import com.sopt.dive.core.local.datastore.UserData
-import com.sopt.dive.core.local.datastore.UserDataStore
 import com.sopt.dive.core.util.FormFieldValidator
 import com.sopt.dive.core.util.showToast
+import com.sopt.dive.presentation.DiveApplication
 import kotlinx.coroutines.launch
 
 @Composable
 fun SignUpRoute(
-    userDataStore: UserDataStore,
     navigateToSignIn: (String, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -64,6 +63,8 @@ fun SignUpRoute(
 
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+
+    val userDataStore = (context.applicationContext as DiveApplication).userDataStore
 
     SignUpScreen(
         userId = userId,

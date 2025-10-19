@@ -18,7 +18,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.sopt.dive.core.designsystem.theme.DiveTheme
-import com.sopt.dive.presentation.DiveApplication
 import com.sopt.dive.presentation.main.MainActivity
 import com.sopt.dive.presentation.signup.SignUpActivity
 import android.graphics.Color as AndroidColor
@@ -45,8 +44,6 @@ class SignInActivity : ComponentActivity() {
             SystemBarStyle.light(AndroidColor.TRANSPARENT, AndroidColor.TRANSPARENT)
         )
 
-        val dataStore = (application as DiveApplication).userDataStore
-
         setContent {
             DiveTheme(darkTheme = false) {
                 Scaffold(
@@ -56,7 +53,6 @@ class SignInActivity : ComponentActivity() {
                 ) { innerPadding ->
                     SignInRoute(
                         resultUserState = resultUserState,
-                        userDataStore = dataStore,
                         navigateToSignUp = ::navigateToSignUp,
                         navigateToMain = ::navigateToMain,
                         modifier = Modifier

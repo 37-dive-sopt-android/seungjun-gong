@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,18 +34,20 @@ import com.sopt.dive.R
 import com.sopt.dive.core.designsystem.component.DiveButton
 import com.sopt.dive.core.designsystem.theme.DiveTheme
 import com.sopt.dive.core.local.datastore.UserData
-import com.sopt.dive.core.local.datastore.UserDataStore
+import com.sopt.dive.presentation.DiveApplication
 import kotlinx.coroutines.launch
 
 
 @Composable
 fun MainRoute(
-    userDataStore: UserDataStore,
     navigateToSignIn: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var savedUserData by remember { mutableStateOf<UserData?>(null) }
     val coroutineScope = rememberCoroutineScope()
+
+    val applicationContext = LocalContext.current.applicationContext
+    val userDataStore = (applicationContext as DiveApplication).userDataStore
 
     LaunchedEffect(Unit) {
         savedUserData = userDataStore.getUserData()

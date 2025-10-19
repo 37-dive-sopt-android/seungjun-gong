@@ -9,7 +9,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.ui.Modifier
 import com.sopt.dive.core.designsystem.theme.DiveTheme
-import com.sopt.dive.presentation.DiveApplication
 import com.sopt.dive.presentation.signin.SignInActivity
 
 class MainActivity : ComponentActivity() {
@@ -20,12 +19,9 @@ class MainActivity : ComponentActivity() {
             SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
         )
 
-        val dataStore = (application as DiveApplication).userDataStore
-
         setContent {
             DiveTheme {
                 MainRoute(
-                    userDataStore = dataStore,
                     navigateToSignIn = ::navigateToSignIn,
                     modifier = Modifier,
                 )
