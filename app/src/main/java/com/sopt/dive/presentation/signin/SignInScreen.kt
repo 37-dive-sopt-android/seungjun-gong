@@ -54,10 +54,10 @@ fun SignInRoute(
     val userDataStore = (context.applicationContext as DiveApplication).userDataStore
 
     LaunchedEffect(resultUserState) {
-        if (resultUserState != null) {
-            userId = resultUserState.first
-            password = resultUserState.second
-        }
+        if (resultUserState == null) return@LaunchedEffect
+
+        userId = resultUserState.first
+        password = resultUserState.second
     }
 
     // 자동 로그인
