@@ -32,6 +32,8 @@ fun PasswordTextField(
 ) {
     var isPasswordVisible by remember { mutableStateOf(false) }
 
+    val passwordVisualTransformation = remember { PasswordVisualTransformation() }
+
     val (visualTransformation, passwordVisibleIcon) = if (isPasswordVisible) {
         Pair(
             VisualTransformation.None,
@@ -39,7 +41,7 @@ fun PasswordTextField(
         )
     } else {
         Pair(
-            PasswordVisualTransformation(),
+            passwordVisualTransformation,
             R.drawable.ic_visibility_off_24
         )
     }
