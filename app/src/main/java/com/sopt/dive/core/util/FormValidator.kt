@@ -4,7 +4,7 @@ object FormFieldValidator {
     private val idRegex = "[^a-zA-Z0-9]".toRegex()
     private val passwordRegex = "[^a-zA-Z0-9~!@#\$%^&*]".toRegex()
     private val nicknameRegex = "[^가-힣a-zA-Z0-9]".toRegex()
-    private val mbtiRegex = "^[E|I][N|S][F|T][J|P]$".toRegex()
+    private val mbtiRegex = "^[EeIi][NnSs][FfTt][JjPp]$".toRegex()
 
     fun validateId(id: String): String = when {
         idRegex.containsMatchIn(id) -> "영문, 숫자 조합만 가능합니다."
@@ -25,7 +25,7 @@ object FormFieldValidator {
     }
 
     fun validateMbti(mbti: String): String = when {
-        !mbtiRegex.matches(mbti.uppercase()) -> "정확한 MBTI(E|I N|S F|T J|P)를 입력해주세요"
+        !mbtiRegex.matches(mbti) -> "정확한 MBTI(E|I N|S F|T J|P)를 입력해주세요"
         else -> ""
     }
 }
