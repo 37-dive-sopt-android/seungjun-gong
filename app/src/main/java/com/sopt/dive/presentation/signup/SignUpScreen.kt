@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -45,16 +44,20 @@ fun SignUpRoute(
     modifier: Modifier = Modifier,
 ) {
     var userId by rememberSaveable { mutableStateOf("") }
-    var userIdError by remember { mutableStateOf("") }
+    val userIdError = if (userId.isNotBlank())
+        FormFieldValidator.validateId(userId) else ""
 
     var password by rememberSaveable { mutableStateOf("") }
-    var passwordError by remember { mutableStateOf("") }
+    val passwordError = if (password.isNotBlank())
+        FormFieldValidator.validatePassword(password) else ""
 
     var nickname by rememberSaveable { mutableStateOf("") }
-    var nicknameError by remember { mutableStateOf("") }
+    val nicknameError = if (nickname.isNotBlank())
+        FormFieldValidator.validateNickname(nickname) else ""
 
     var userMbti by rememberSaveable { mutableStateOf("") }
-    var userMbtiError by remember { mutableStateOf("") }
+    val userMbtiError = if (userMbti.isNotBlank())
+        FormFieldValidator.validateMbti(userMbti) else ""
 
     val signUpEnabled = userId.isNotBlank() && userIdError.isBlank() &&
             password.isNotBlank() && passwordError.isBlank() &&
@@ -69,32 +72,16 @@ fun SignUpRoute(
     SignUpScreen(
         userId = userId,
         userIdError = userIdError,
-        onUserIdChange = {
-            userId = it
-            userIdError = if (it.isNotBlank())
-                FormFieldValidator.validateId(it) else ""
-        },
+        onUserIdChange = { userId = it },
         password = password,
         passwordError = passwordError,
-        onPasswordChange = {
-            password = it
-            passwordError = if (it.isNotBlank())
-                FormFieldValidator.validatePassword(it) else ""
-        },
+        onPasswordChange = { password = it },
         nickname = nickname,
         nicknameError = nicknameError,
-        onNicknameChange = {
-            nickname = it
-            nicknameError = if (it.isNotBlank())
-                FormFieldValidator.validateNickname(it) else ""
-        },
+        onNicknameChange = { nickname = it },
         userMbti = userMbti,
         userMbtiError = userMbtiError,
-        onUserMbtiChange = {
-            userMbti = it
-            userMbtiError = if (it.isNotBlank())
-                FormFieldValidator.validateMbti(it) else ""
-        },
+        onUserMbtiChange = { userMbti = it },
         onSignUpClick = {
             if (signUpEnabled)
                 coroutineScope.launch {
