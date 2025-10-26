@@ -1,12 +1,15 @@
 package com.sopt.dive.presentation.signup
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -29,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sopt.dive.R
+import com.sopt.dive.core.compositionlocal.LocalInnerPadding
 import com.sopt.dive.core.designsystem.component.DiveButton
 import com.sopt.dive.core.designsystem.component.LabelTextField
 import com.sopt.dive.core.designsystem.theme.DiveTheme
@@ -40,7 +44,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SignUpRoute(
-    navigateToSignIn: (String, String) -> Unit,
+    navigateToSignIn: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var userId by rememberSaveable { mutableStateOf("") }
@@ -92,7 +96,7 @@ fun SignUpRoute(
                         mbti = userMbti.uppercase(),
                     )
                     userDataStore.setUserData(newUser)
-                    navigateToSignIn(userId, password)
+                    navigateToSignIn()
                 }
             else with(context) { showToast(getString(R.string.error_text)) }
         },
@@ -124,11 +128,17 @@ private fun SignUpScreen(
         scrollState.scrollBy(keyboardHeight.toFloat())
     }
 
+    val innerPadding = LocalInnerPadding.current
+
     Column(
         modifier = modifier
             .fillMaxSize()
+            .background(Color.White)
             .verticalScroll(scrollState)
-            .padding(horizontal = 20.dp),
+            .padding(horizontal = 20.dp)
+            .padding(innerPadding)
+            .consumeWindowInsets(innerPadding)
+            .imePadding(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
@@ -187,7 +197,6 @@ private fun SignUpScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    top = 20.dp,
                     bottom = 40.dp,
                 ),
         )
