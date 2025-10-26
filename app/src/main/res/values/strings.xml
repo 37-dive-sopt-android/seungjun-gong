@@ -24,4 +24,13 @@
     <!--Error    -->
     <string name="error_text">회원 정보를 입력해주세요</string>
 
+    <!--Home    -->
+    <string name="home">Home</string>
+
+    <!--Search  -->
+    <string name="search">Search</string>
+
+    <!--My -->
+    <string name="my">My</string>
+
 </resources>
