@@ -92,7 +92,13 @@ private fun MainNavHost(
         )
 
         signUpGraph(
-            navigateToSignIn = navigator.navController::navigateUp,
+            navigateToSignIn = { id, pw ->
+                navigator.navController.navigateToSignIn(
+                    id = id,
+                    pw = pw,
+                    navOptions = clearBackStackNavOptions,
+                )
+            }
         )
 
         homeGraph(
@@ -102,7 +108,15 @@ private fun MainNavHost(
                 )
             },
         )
+
         searchGraph()
-        myGraph()
+
+        myGraph(
+            navigateToSignIn =  {
+                navigator.navController.navigateToSignIn(
+                    navOptions = clearBackStackNavOptions,
+                )
+            },
+        )
     }
 }

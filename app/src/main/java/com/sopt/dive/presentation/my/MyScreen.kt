@@ -5,10 +5,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
@@ -31,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sopt.dive.R
+import com.sopt.dive.core.compositionlocal.LocalInnerPadding
 import com.sopt.dive.core.designsystem.component.DiveButton
 import com.sopt.dive.core.designsystem.theme.DiveTheme
 import com.sopt.dive.core.local.datastore.UserData
@@ -39,7 +40,7 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun MainRoute(
+fun MyRoute(
     navigateToSignIn: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -54,14 +55,14 @@ fun MainRoute(
     }
 
     savedUserData?.run {
-        MainScreen(
+        MyScreen(
             userId = userId,
             password = password,
             nickname = nickname,
             mbti = mbti,
             onLogoutClick = {
                 coroutineScope.launch {
-                    userDataStore.clearUserData()
+                    userDataStore.clearAutoLoginStatus()
                     navigateToSignIn()
                 }
             },
@@ -71,7 +72,7 @@ fun MainRoute(
 }
 
 @Composable
-private fun MainScreen(
+private fun MyScreen(
     userId: String,
     password: String,
     nickname: String,
@@ -79,12 +80,14 @@ private fun MainScreen(
     onLogoutClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val innerPadding = LocalInnerPadding.current
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(20.dp)
-            .systemBarsPadding(),
+            ,
     ) {
         Row(
             modifier = Modifier
@@ -170,9 +173,9 @@ private fun LabelText(
 
 @Preview(showBackground = true)
 @Composable
-private fun MainScreenPreview() {
+private fun MyScreenPreview() {
     DiveTheme {
-        MainScreen(
+        MyScreen(
             userId = "",
             password = "",
             nickname = "",

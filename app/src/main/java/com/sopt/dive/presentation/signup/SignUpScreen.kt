@@ -44,7 +44,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SignUpRoute(
-    navigateToSignIn: () -> Unit,
+    navigateToSignIn: (String, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var userId by rememberSaveable { mutableStateOf("") }
@@ -96,7 +96,7 @@ fun SignUpRoute(
                         mbti = userMbti.uppercase(),
                     )
                     userDataStore.setUserData(newUser)
-                    navigateToSignIn()
+                    navigateToSignIn(userId, password)
                 }
             else with(context) { showToast(getString(R.string.error_text)) }
         },

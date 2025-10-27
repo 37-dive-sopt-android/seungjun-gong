@@ -43,11 +43,12 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SignInRoute(
+    authInfo: Pair<String, String>,
     navigateToSignUp: () -> Unit,
     navigateToHome: () -> Unit,
 ) {
-    var userId by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
+    var userId by rememberSaveable { mutableStateOf(authInfo.first) }
+    var password by rememberSaveable { mutableStateOf(authInfo.second) }
     var isLoading by remember { mutableStateOf(true) }
 
     val coroutineScope = rememberCoroutineScope()
@@ -55,17 +56,10 @@ fun SignInRoute(
 
     val userDataStore = (context.applicationContext as DiveApplication).userDataStore
 
-//    LaunchedEffect(resultUserState) {
-//        if (resultUserState == null) return@LaunchedEffect
-//
-//        userId = resultUserState.first
-//        password = resultUserState.second
-//    }
-
     // 자동 로그인
     LaunchedEffect(Unit) {
-        val savedUserData = userDataStore.getUserData()
-        if (savedUserData != null) {
+        val autoLoginStatus = userDataStore.getAutoLoginStatus()
+        if (autoLoginStatus) {
             navigateToHome()
         } else {
             isLoading = false
@@ -92,6 +86,7 @@ fun SignInRoute(
 
                 if (savedUserData != null && savedUserData.userId == userId && savedUserData.password == password) {
                     context.showToast("로그인에 성공했습니다")
+                    userDataStore.setAutoLoginStatus(true)
                     navigateToHome()
                 } else {
                     context.showToast("ID 또는 비밀번호가 일치하지 않습니다")
@@ -122,8 +117,7 @@ private fun SignInScreen(
             .consumeWindowInsets(innerPadding)
             .imePadding()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp)
-         ,
+            .padding(horizontal = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
