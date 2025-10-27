@@ -87,7 +87,8 @@ private fun MyScreen(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(20.dp)
-            ,
+            .padding(innerPadding)
+            .consumeWindowInsets(innerPadding),
     ) {
         Row(
             modifier = Modifier

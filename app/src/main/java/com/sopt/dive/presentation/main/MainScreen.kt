@@ -112,7 +112,7 @@ private fun MainNavHost(
         searchGraph()
 
         myGraph(
-            navigateToSignIn =  {
+            navigateToSignIn = {
                 navigator.navController.navigateToSignIn(
                     navOptions = clearBackStackNavOptions,
                 )
