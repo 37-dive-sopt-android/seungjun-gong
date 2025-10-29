@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navOptions
 import com.sopt.dive.core.compositionlocal.LocalInnerPadding
+import com.sopt.dive.core.designsystem.component.StatusBarGradient
 import com.sopt.dive.presentation.home.navigation.homeGraph
 import com.sopt.dive.presentation.home.navigation.navigateToHome
 import com.sopt.dive.presentation.main.component.MainBottomBar
@@ -61,6 +62,7 @@ fun MainScreen(
             MainNavHost(
                 navigator = navigator,
             )
+            StatusBarGradient()
         }
     }
 }
@@ -101,13 +103,7 @@ private fun MainNavHost(
             }
         )
 
-        homeGraph(
-            navigateToSignIn = {
-                navigator.navController.navigateToSignIn(
-                    navOptions = clearBackStackNavOptions,
-                )
-            },
-        )
+        homeGraph()
 
         searchGraph()
 
