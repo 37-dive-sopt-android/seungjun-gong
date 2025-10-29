@@ -14,7 +14,9 @@ import androidx.compose.ui.platform.LocalDensity
 
 @Composable
 fun StatusBarGradient(
-    modifier: Modifier = Modifier, color: Color = Color.White, intensity: Float = 1.2f
+    modifier: Modifier = Modifier,
+    color: Color = Color.White,
+    intensity: Float = 1.2f,
 ) {
     val density = LocalDensity.current
     val statusBarTopPx = WindowInsets.statusBars.getTop(density).toFloat()
@@ -27,7 +29,9 @@ fun StatusBarGradient(
             .drawWithCache {
                 val brush = Brush.verticalGradient(
                     colors = listOf(
-                        color.copy(alpha = 1f), color.copy(alpha = 0.8f), Color.Transparent
+                        color.copy(alpha = 1f),
+                        color.copy(alpha = 0.8f),
+                        Color.Transparent,
                     ),
                     startY = 0f,
                     endY = heightPx,
