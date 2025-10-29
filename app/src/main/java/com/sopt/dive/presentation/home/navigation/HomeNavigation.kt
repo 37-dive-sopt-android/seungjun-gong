@@ -12,11 +12,9 @@ fun NavController.navigateToHome(navOptions: NavOptions? = null) =
     navigate(Home, navOptions)
 
 fun NavGraphBuilder.homeGraph(
-    navigateToSignIn: () -> Unit,
 ) {
     composable<Home> {
         HomeRoute(
-            navigateToSignIn = navigateToSignIn,
         )
     }
 }
