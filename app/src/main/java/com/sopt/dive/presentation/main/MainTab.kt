@@ -11,8 +11,8 @@ import com.sopt.dive.presentation.my.navigation.My
 import com.sopt.dive.presentation.search.navigation.Search
 
 enum class MainTab(
-    @param: DrawableRes val iconRes: Int,
-    @param: StringRes val label: Int,
+    @DrawableRes val iconRes: Int,
+    @StringRes val label: Int,
     val route: MainTabRoute,
 ) {
     HOME(
