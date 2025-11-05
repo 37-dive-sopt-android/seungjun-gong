@@ -4,7 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.sopt.dive.core.commom.navigation.Route
+import com.sopt.dive.core.common.navigation.Route
 import com.sopt.dive.presentation.signup.SignUpRoute
 import kotlinx.serialization.Serializable
 

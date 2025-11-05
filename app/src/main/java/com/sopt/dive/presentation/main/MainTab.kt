@@ -4,8 +4,8 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import com.sopt.dive.R
-import com.sopt.dive.core.commom.navigation.MainTabRoute
-import com.sopt.dive.core.commom.navigation.Route
+import com.sopt.dive.core.common.navigation.MainTabRoute
+import com.sopt.dive.core.common.navigation.Route
 import com.sopt.dive.presentation.home.navigation.Home
 import com.sopt.dive.presentation.my.navigation.My
 import com.sopt.dive.presentation.search.navigation.Search
