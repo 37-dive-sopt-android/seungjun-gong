@@ -1,0 +1,98 @@
+package com.sopt.dive.presentation.home
+
+import androidx.lifecycle.ViewModel
+import com.sopt.dive.presentation.home.model.HomeUiState
+import com.sopt.dive.presentation.home.model.ProfileItemUiState
+import com.sopt.dive.presentation.home.type.ProfileStatus
+import com.sopt.dive.presentation.home.type.ProfileTrailingType
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+
+class HomeViewModel : ViewModel() {
+
+    // TODO: 삭제 예정
+    private val dummyProfiles = persistentListOf(
+        ProfileItemUiState(
+            profileUrl = "https://avatars.githubusercontent.com/u/76648361?v=4",
+            name = "공승준",
+            description = "안드콩닥콩닥",
+            profileStatus = ProfileStatus.BIRTHDAY,
+            trailingType = ProfileTrailingType.GiftButton
+        ),
+        ProfileItemUiState(
+            profileUrl = "https://avatars.githubusercontent.com/u/76648361?v=4",
+            name = "침교동",
+            description = "비린내",
+            profileStatus = ProfileStatus.NONE,
+            trailingType = ProfileTrailingType.MusicButton("Love Lee - AKMU")
+        ),
+        ProfileItemUiState(
+            profileUrl = "https://avatars.githubusercontent.com/u/76648361?v=4",
+            name = "침냥이",
+            description = "고양이 카와이",
+            profileStatus = ProfileStatus.NONE,
+            trailingType = null
+        ),
+        ProfileItemUiState(
+            profileUrl = "https://avatars.githubusercontent.com/u/76648361?v=4",
+            name = "위험한 자식",
+            description = null,
+            profileStatus = ProfileStatus.BIRTHDAY,
+            trailingType = ProfileTrailingType.GiftButton
+        ),
+        ProfileItemUiState(
+            profileUrl = "https://avatars.githubusercontent.com/u/76648361?v=4",
+            name = "침숭이",
+            description = "M자 탈모",
+            profileStatus = ProfileStatus.NONE,
+            trailingType = ProfileTrailingType.MusicButton("Ditto - NewJeans")
+        ),
+        ProfileItemUiState(
+            profileUrl = "https://avatars.githubusercontent.com/u/76648361?v=4",
+            name = "위험한 자식",
+            description = null,
+            profileStatus = ProfileStatus.NONE,
+            trailingType = ProfileTrailingType.GiftButton
+        ),
+        ProfileItemUiState(
+            profileUrl = "https://avatars.githubusercontent.com/u/76648361?v=4",
+            name = "침교동",
+            description = "비린내",
+            profileStatus = ProfileStatus.NONE,
+            trailingType = ProfileTrailingType.MusicButton("Love Lee - AKMU")
+        ),
+        ProfileItemUiState(
+            profileUrl = "https://avatars.githubusercontent.com/u/76648361?v=4",
+            name = "침냥이",
+            description = "고양이 카와이",
+            profileStatus = ProfileStatus.NONE,
+            trailingType = null
+        ),
+        ProfileItemUiState(
+            profileUrl = "https://avatars.githubusercontent.com/u/76648361?v=4",
+            name = "위험한 자식",
+            description = null,
+            profileStatus = ProfileStatus.BIRTHDAY,
+            trailingType = ProfileTrailingType.GiftButton
+        ),
+        ProfileItemUiState(
+            profileUrl = "https://avatars.githubusercontent.com/u/76648361?v=4",
+            name = "침숭이",
+            description = "M자 탈모",
+            profileStatus = ProfileStatus.NONE,
+            trailingType = ProfileTrailingType.MusicButton("Ditto - NewJeans")
+        ),
+        ProfileItemUiState(
+            profileUrl = "https://avatars.githubusercontent.com/u/76648361?v=4",
+            name = "위험한 자식",
+            description = null,
+            profileStatus = ProfileStatus.NONE,
+            trailingType = ProfileTrailingType.GiftButton
+        ),
+    )
+
+    private val _uiState = MutableStateFlow(HomeUiState(profiles = dummyProfiles))
+    val uiState = _uiState.asStateFlow()
+
+}
