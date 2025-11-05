@@ -1,0 +1,103 @@
+package com.sopt.dive.presentation.search.component
+
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import com.sopt.dive.R
+import com.sopt.dive.core.util.noRippleClickable
+import kotlinx.collections.immutable.persistentListOf
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+fun TransitionCardScreen(
+    modifier: Modifier = Modifier,
+) {
+    val cardList = persistentListOf("card1", "card2")
+    var selectedKey by remember { mutableStateOf<String?>(null) }
+
+    SharedTransitionLayout(
+        modifier = modifier,
+    ) {
+        AnimatedContent(
+            targetState = selectedKey,
+        ) { key ->
+            with(this@SharedTransitionLayout) {
+                if (key == null) {
+                    // 기본 상태
+                    Row(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        horizontalArrangement = Arrangement.spacedBy(
+                            space = 20.dp,
+                            alignment = Alignment.CenterHorizontally,
+                        ),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        cardList.forEach { card ->
+                            TransitionCard(
+                                key = card,
+                                onClick = { selectedKey = card },
+                                animatedVisibilityScope = this@AnimatedContent,
+                            )
+                        }
+                    }
+                } else {
+                    // 확장된 상태
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .noRippleClickable(onClick = { selectedKey = null }),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        FlipCard(
+                            modifier = Modifier
+                                .sharedElement(
+                                    rememberSharedContentState(key = key),
+                                    animatedVisibilityScope = this@AnimatedContent,
+                                )
+                        )
+
+                    }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+private fun SharedTransitionScope.TransitionCard(
+    key: String,
+    onClick: () -> Unit,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    modifier: Modifier = Modifier,
+) {
+    Image(
+        painter = painterResource(R.drawable.img_back_card),
+        contentDescription = null,
+        modifier = modifier
+            .sharedElement(
+                rememberSharedContentState(key = key),
+                animatedVisibilityScope = animatedVisibilityScope,
+            )
+            .noRippleClickable(onClick = onClick)
+            .size(200.dp),
+    )
+}
