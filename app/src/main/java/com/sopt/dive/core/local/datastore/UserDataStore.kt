@@ -3,6 +3,7 @@ package com.sopt.dive.core.local.datastore
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -25,22 +26,30 @@ class UserDataStore(private val context: Context) {
         }
     }.firstOrNull()
 
-    suspend fun setUserData(userData: UserData) {
-        context.dataStore.edit { prefs ->
-            prefs[USER_ID_KEY] = userData.userId
-            prefs[PASSWORD_KEY] = userData.password
-            prefs[NICKNAME_KEY] = userData.nickname
-            prefs[MBTI_KEY] = userData.mbti
-        }
+    suspend fun setUserData(userData: UserData) = context.dataStore.edit { prefs ->
+        prefs[USER_ID_KEY] = userData.userId
+        prefs[PASSWORD_KEY] = userData.password
+        prefs[NICKNAME_KEY] = userData.nickname
+        prefs[MBTI_KEY] = userData.mbti
     }
 
-    suspend fun clearUserData() {
-        context.dataStore.edit { prefs ->
-            prefs.remove(USER_ID_KEY)
-            prefs.remove(PASSWORD_KEY)
-            prefs.remove(NICKNAME_KEY)
-            prefs.remove(MBTI_KEY)
-        }
+    suspend fun clearUserData() = context.dataStore.edit { prefs ->
+        prefs.remove(USER_ID_KEY)
+        prefs.remove(PASSWORD_KEY)
+        prefs.remove(NICKNAME_KEY)
+        prefs.remove(MBTI_KEY)
+    }
+
+    suspend fun setAutoLoginStatus(isChecked: Boolean) = context.dataStore.edit { prefs ->
+        prefs[AUTO_LOGIN_KEY] = isChecked
+    }
+
+    suspend fun getAutoLoginStatus(): Boolean = context.dataStore.data.map { prefs ->
+        prefs[AUTO_LOGIN_KEY]
+    }.firstOrNull() ?: false
+
+    suspend fun clearAutoLoginStatus() = context.dataStore.edit { prefs ->
+        prefs.remove(AUTO_LOGIN_KEY)
     }
 
     companion object {
@@ -48,6 +57,7 @@ class UserDataStore(private val context: Context) {
         private val PASSWORD_KEY = stringPreferencesKey("password")
         private val NICKNAME_KEY = stringPreferencesKey("nickname")
         private val MBTI_KEY = stringPreferencesKey("mbti")
+        private val AUTO_LOGIN_KEY = booleanPreferencesKey("auto_login")
     }
 }
 

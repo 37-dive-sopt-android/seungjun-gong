@@ -1,11 +1,14 @@
 package com.sopt.dive.presentation.signin
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
@@ -39,13 +42,12 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SignInRoute(
-    resultUserState: Pair<String, String>?,
+    authInfo: Pair<String, String>,
     navigateToSignUp: () -> Unit,
-    navigateToMain: () -> Unit,
-    modifier: Modifier = Modifier,
+    navigateToHome: () -> Unit,
 ) {
-    var userId by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
+    var userId by rememberSaveable { mutableStateOf(authInfo.first) }
+    var password by rememberSaveable { mutableStateOf(authInfo.second) }
     var isLoading by remember { mutableStateOf(true) }
 
     val coroutineScope = rememberCoroutineScope()
@@ -53,18 +55,11 @@ fun SignInRoute(
 
     val userDataStore = (context.applicationContext as DiveApplication).userDataStore
 
-    LaunchedEffect(resultUserState) {
-        if (resultUserState == null) return@LaunchedEffect
-
-        userId = resultUserState.first
-        password = resultUserState.second
-    }
-
     // 자동 로그인
     LaunchedEffect(Unit) {
-        val savedUserData = userDataStore.getUserData()
-        if (savedUserData != null) {
-            navigateToMain()
+        val autoLoginStatus = userDataStore.getAutoLoginStatus()
+        if (autoLoginStatus) {
+            navigateToHome()
         } else {
             isLoading = false
         }
@@ -90,14 +85,14 @@ fun SignInRoute(
 
                 if (savedUserData != null && savedUserData.userId == userId && savedUserData.password == password) {
                     context.showToast("로그인에 성공했습니다")
-                    navigateToMain()
+                    userDataStore.setAutoLoginStatus(true)
+                    navigateToHome()
                 } else {
                     context.showToast("ID 또는 비밀번호가 일치하지 않습니다")
                 }
             }
         },
         onSignUpClick = navigateToSignUp,
-        modifier = modifier,
     )
 }
 
@@ -114,8 +109,11 @@ private fun SignInScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .background(Color.White)
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp),
+            .padding(horizontal = 20.dp)
+            .systemBarsPadding()
+            .imePadding(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
