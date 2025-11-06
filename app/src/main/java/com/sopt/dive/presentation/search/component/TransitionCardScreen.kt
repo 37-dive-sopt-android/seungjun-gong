@@ -66,14 +66,25 @@ fun TransitionCardScreen(
                             .noRippleClickable(onClick = { selectedKey = null }),
                         contentAlignment = Alignment.Center,
                     ) {
-                        FlipCard(
-                            modifier = Modifier
-                                .sharedElement(
-                                    rememberSharedContentState(key = key),
-                                    animatedVisibilityScope = this@AnimatedContent,
+                        when (selectedKey) {
+                            cardList[0] ->
+                                FlipCard(
+                                    modifier = Modifier
+                                        .sharedElement(
+                                            rememberSharedContentState(key = key),
+                                            animatedVisibilityScope = this@AnimatedContent,
+                                        )
                                 )
-                        )
 
+                            cardList[1] ->
+                                SpringCard(
+                                    modifier = Modifier
+                                        .sharedElement(
+                                            rememberSharedContentState(key = key),
+                                            animatedVisibilityScope = this@AnimatedContent,
+                                        )
+                                )
+                        }
                     }
                 }
             }
