@@ -24,11 +24,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.sopt.dive.R
 import com.sopt.dive.core.util.noRippleClickable
 
@@ -73,7 +71,7 @@ fun SpringCard(
     }
 
     val backTextAlpha by transition.animateFloat(
-        transitionSpec = { tween(500, easing = FastOutSlowInEasing) }, label = "back-alpha"
+        transitionSpec = { tween(1000, easing = FastOutSlowInEasing) }, label = "back-alpha"
     ) { flipped ->
         if (flipped) 1f else 0f
     }
@@ -88,27 +86,29 @@ fun SpringCard(
                 backElevation = backElevation,
                 frontElevation = frontElevation,
                 modifier = Modifier.graphicsLayer {
-                        rotationY = rotateCardY - 180f
-                        cameraDistance = 12f * this.density
-                        translationX = move
-                        translationY = move
-                    },
+                    rotationY = rotateCardY - 180f
+                    cameraDistance = 12f * this.density
+                    translationX = move
+                    translationY = move
+                },
             )
         } else {
             FrontCard(
+                textAlpha = backTextAlpha,
                 backElevation = backElevation,
                 frontElevation = frontElevation,
                 modifier = Modifier.graphicsLayer {
-                        rotationY = rotateCardY
-                        cameraDistance = 12f * this.density
-                    },
+                    rotationY = rotateCardY
+                    cameraDistance = 12f * this.density
+                },
             )
         }
     }
 }
 
 @Composable
-private fun FrontCard(
+private fun BoxScope.FrontCard(
+    textAlpha: Float,
     backElevation: Dp,
     frontElevation: Dp,
     modifier: Modifier,
@@ -118,11 +118,22 @@ private fun FrontCard(
             topStart = 80.dp, topEnd = 20.dp, bottomStart = 20.dp, bottomEnd = 80.dp
         ),
         shadowElevation = backElevation,
+        modifier = Modifier.wrapContentSize(),
     ) {
         Image(
             painter = painterResource(id = R.drawable.img_card_background),
-            contentDescription = null
+            contentDescription = null,
         )
+        Box(
+            modifier = Modifier.matchParentSize(),
+        ) {
+            Text(
+                text = "침착맨 팝업 가고싶다".repeat(50),
+                color = Color.White,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.graphicsLayer { alpha = textAlpha },
+            )
+        }
     }
 
     Surface(
@@ -173,11 +184,9 @@ private fun BoxScope.BackCard(
             Text(
                 text = "침착맨 팝업 가고싶다".repeat(50),
                 color = Color.White,
-                fontSize = 18.sp,
-                softWrap = true,
-                fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.graphicsLayer { alpha = textAlpha })
+                modifier = Modifier.graphicsLayer { alpha = textAlpha },
+            )
         }
     }
 }
