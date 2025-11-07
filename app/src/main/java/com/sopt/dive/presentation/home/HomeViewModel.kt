@@ -5,14 +5,16 @@ import com.sopt.dive.presentation.home.model.HomeUiState
 import com.sopt.dive.presentation.home.model.ProfileItemUiState
 import com.sopt.dive.presentation.home.type.ProfileStatus
 import com.sopt.dive.presentation.home.type.ProfileTrailingType
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 class HomeViewModel : ViewModel() {
 
     // TODO: 삭제 예정
-    private val dummyProfiles = persistentListOf(
+    private fun getProfiles() = persistentListOf(
         ProfileItemUiState(
             profileUrl = "https://avatars.githubusercontent.com/u/76648361?v=4",
             name = "공승준",
@@ -89,10 +91,22 @@ class HomeViewModel : ViewModel() {
             description = null,
             profileStatus = ProfileStatus.NONE,
             trailingType = ProfileTrailingType.GiftButton
-        ),
+        )
     )
 
-    private val _uiState = MutableStateFlow(HomeUiState(profiles = dummyProfiles))
+    private val _uiState = MutableStateFlow(HomeUiState())
     val uiState = _uiState.asStateFlow()
+
+    private fun updateProfiles(profiles: ImmutableList<ProfileItemUiState>) =
+        _uiState.update { currentState ->
+            currentState.copy(
+                profiles = profiles,
+            )
+        }
+
+    fun loadProfiles() {
+        val dummyProfiles = getProfiles()
+        updateProfiles(dummyProfiles)
+    }
 
 }
