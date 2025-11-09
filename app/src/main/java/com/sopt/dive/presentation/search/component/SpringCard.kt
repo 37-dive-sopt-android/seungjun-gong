@@ -1,13 +1,11 @@
 package com.sopt.dive.presentation.search.component
 
-import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,12 +14,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.sopt.dive.R
@@ -38,10 +37,6 @@ fun SpringCard(
         stiffness = 177.8f, dampingRatio = 0.75f
     )
 
-    val springSpecDp = spring<Dp>(
-        stiffness = 177.8f, dampingRatio = 0.75f
-    )
-
     val density = LocalDensity.current
 
     val transition = updateTransition(targetState = isCardClicked, label = "card-transition")
@@ -55,20 +50,6 @@ fun SpringCard(
         transitionSpec = { springSpecFloat },
         label = "move",
     ) { isClicked -> if (isClicked) with(density) { 56.dp.toPx() } else 0f }
-
-    val frontElevation by transition.animateDp(
-        transitionSpec = { springSpecDp },
-        label = "front-elev",
-    ) { isClicked ->
-        if (!isClicked) 10.dp else 0.dp
-    }
-
-    val backElevation by transition.animateDp(
-        transitionSpec = { springSpecDp },
-        label = "back-elev",
-    ) { isClicked ->
-        if (isClicked) 5.dp else 0.dp
-    }
 
     val backTextAlpha by transition.animateFloat(
         transitionSpec = { springSpecFloat },
@@ -95,26 +76,31 @@ fun SpringCard(
         modifier = modifier.noRippleClickable { isCardClicked = !isCardClicked },
         contentAlignment = Alignment.Center,
     ) {
-        Surface(
+        BackCard(
+            textAlpha = backTextAlpha,
             modifier = Modifier
-                .zIndex(if (isCardClicked) 1f else 0f),
-            shape = backShape,
-            shadowElevation = backElevation,
-        ) {
-            BackCard(textAlpha = backTextAlpha)
-        }
+                .zIndex(if (isCardClicked) 1f else 0f)
+                .shadow(
+                    elevation = if (rotateCardY <= 20f) 0.dp else 10.dp,
+                    shape = backShape,
+                )
+                .clip(backShape),
+        )
 
-        Surface(
+        Box(
             modifier = Modifier
                 .zIndex(if (isCardClicked) 0f else 1f)
+                .shadow(
+                    elevation = if (rotateCardY <= 20f) 10.dp else 0.dp,
+                    shape = frontShape
+                )
                 .graphicsLayer {
                     rotationY = rotateCardY
                     cameraDistance = 12f * this.density
                     translationX = move
                     translationY = move
-                },
-            shape = frontShape,
-            shadowElevation = frontElevation,
+                }
+                .clip(frontShape),
         ) {
             Image(
                 painter = painterResource(R.drawable.img_front_card),
