@@ -4,9 +4,9 @@ import kotlinx.serialization.SerialName
 
 data class PatchProfileRequest(
     @SerialName("name")
-    val name: String,
+    val name: String?,
     @SerialName("email")
-    val email: String,
+    val email: String?,
     @SerialName("age")
-    val age: Int,
+    val age: Int?,
 )
