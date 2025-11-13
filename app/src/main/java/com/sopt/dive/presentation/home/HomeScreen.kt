@@ -36,10 +36,6 @@ fun HomeRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
-        viewModel.loadProfiles()
-    }
-
     HomeScreen(
         profileList = uiState.profiles,
     )

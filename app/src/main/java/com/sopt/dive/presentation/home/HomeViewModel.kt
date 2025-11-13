@@ -97,6 +97,10 @@ class HomeViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState = _uiState.asStateFlow()
 
+    init {
+        loadProfiles()
+    }
+
     private fun updateProfiles(profiles: ImmutableList<ProfileItemUiState>) =
         _uiState.update { currentState ->
             currentState.copy(
@@ -104,7 +108,7 @@ class HomeViewModel : ViewModel() {
             )
         }
 
-    fun loadProfiles() {
+    private fun loadProfiles() {
         val dummyProfiles = getProfiles()
         updateProfiles(dummyProfiles)
     }
