@@ -30,16 +30,17 @@ fun TransitionCardScreen(
     modifier: Modifier = Modifier,
 ) {
     val cardList = persistentListOf("card1", "card2")
+    var isShowDetail by remember { mutableStateOf(false) }
     var selectedKey by remember { mutableStateOf<String?>(null) }
 
     SharedTransitionLayout(
         modifier = modifier,
     ) {
         AnimatedContent(
-            targetState = selectedKey,
-        ) { key ->
+            targetState = isShowDetail,
+        ) { isShow ->
             with(this@SharedTransitionLayout) {
-                if (key == null) {
+                if (!isShow) {
                     // 기본 상태
                     Row(
                         modifier = Modifier
@@ -53,7 +54,11 @@ fun TransitionCardScreen(
                         cardList.forEach { card ->
                             TransitionCard(
                                 key = card,
-                                onClick = { selectedKey = card },
+                                onClick = {
+                                    isShowDetail = true
+                                    selectedKey = card
+                                },
+                                sharedTransitionScope = this@SharedTransitionLayout,
                                 animatedVisibilityScope = this@AnimatedContent,
                             )
                         }
@@ -63,27 +68,31 @@ fun TransitionCardScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .noRippleClickable(onClick = { selectedKey = null }),
+                            .noRippleClickable {
+                                isShowDetail = false
+                            },
                         contentAlignment = Alignment.Center,
                     ) {
-                        when (selectedKey) {
-                            cardList[0] ->
-                                FlipCard(
-                                    modifier = Modifier
-                                        .sharedElement(
-                                            rememberSharedContentState(key = key),
-                                            animatedVisibilityScope = this@AnimatedContent,
-                                        )
-                                )
+                        selectedKey?.let { card ->
+                            when (card) {
+                                cardList[0] ->
+                                    FlipCard(
+                                        modifier = Modifier
+                                            .sharedElement(
+                                                rememberSharedContentState(key = card),
+                                                animatedVisibilityScope = this@AnimatedContent,
+                                            )
+                                    )
 
-                            cardList[1] ->
-                                SpringCard(
-                                    modifier = Modifier
-                                        .sharedElement(
-                                            rememberSharedContentState(key = key),
-                                            animatedVisibilityScope = this@AnimatedContent,
-                                        )
-                                )
+                                cardList[1] ->
+                                    SpringCard(
+                                        modifier = Modifier
+                                            .sharedElement(
+                                                rememberSharedContentState(key = card),
+                                                animatedVisibilityScope = this@AnimatedContent,
+                                            )
+                                    )
+                            }
                         }
                     }
                 }
@@ -94,21 +103,25 @@ fun TransitionCardScreen(
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-private fun SharedTransitionScope.TransitionCard(
+private fun TransitionCard(
     key: String,
     onClick: () -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     modifier: Modifier = Modifier,
+    size: Int = 200,
 ) {
-    Image(
-        painter = painterResource(R.drawable.img_back_card),
-        contentDescription = null,
-        modifier = modifier
-            .sharedElement(
-                rememberSharedContentState(key = key),
-                animatedVisibilityScope = animatedVisibilityScope,
-            )
-            .noRippleClickable(onClick = onClick)
-            .size(200.dp),
-    )
+    with(sharedTransitionScope) {
+        Image(
+            painter = painterResource(R.drawable.img_back_card),
+            contentDescription = null,
+            modifier = modifier
+                .sharedElement(
+                    rememberSharedContentState(key = key),
+                    animatedVisibilityScope = animatedVisibilityScope,
+                )
+                .noRippleClickable(onClick = onClick)
+                .size(size.dp)
+        )
+    }
 }
