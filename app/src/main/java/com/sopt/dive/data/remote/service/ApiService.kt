@@ -12,7 +12,6 @@ import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
-import java.lang.reflect.Member
 
 interface ApiService {
     @POST("/users")
@@ -39,5 +38,5 @@ interface ApiService {
     suspend fun patchUserProfile(
         @Path("id") userId: Long,
         @Body requestBody: PatchProfileRequest,
-    ): BaseResponse<Member>
+    ): BaseResponse<MemberDto>
 }
