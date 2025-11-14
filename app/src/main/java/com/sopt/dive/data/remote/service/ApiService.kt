@@ -14,27 +14,27 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface ApiService {
-    @POST("/users")
+    @POST("users")
     suspend fun postSignUp(
         @Body requestBody: PostSignUpRequest,
     ): BaseResponse<MemberDto>
 
-    @POST("/auth/login")
+    @POST("auth/login")
     suspend fun postLogin(
         @Body requestBody: PostLoginRequest,
     ): BaseResponse<PostLoginResponse>
 
-    @DELETE("/users/{id}")
+    @DELETE("users/{id}")
     suspend fun deleteUser(
         @Path("id") userId: Long,
     ): BaseResponse<Unit>
 
-    @GET("/users/{id}")
+    @GET("users/{id}")
     suspend fun getUserProfile(
         @Path("id") userId: Long,
     ): BaseResponse<MemberDto>
 
-    @PATCH("/users/{id}")
+    @PATCH("users/{id}")
     suspend fun patchUserProfile(
         @Path("id") userId: Long,
         @Body requestBody: PatchProfileRequest,
