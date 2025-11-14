@@ -11,7 +11,7 @@ import androidx.navigation.navOptions
 import com.sopt.dive.presentation.home.navigation.navigateToHome
 import com.sopt.dive.presentation.my.navigation.navigateToMy
 import com.sopt.dive.presentation.search.navigation.navigateToSearch
-import com.sopt.dive.presentation.signin.navigation.SignIn
+import com.sopt.dive.presentation.splash.navigation.Splash
 
 class MainNavigator(
     val navController: NavHostController,
@@ -20,7 +20,7 @@ class MainNavigator(
         @Composable get() = navController
             .currentBackStackEntryAsState().value?.destination
 
-    val startDestination = SignIn("", "")
+    val startDestination = Splash
 
     val currentTab: MainTab?
         @Composable get() = MainTab.find { tab ->
