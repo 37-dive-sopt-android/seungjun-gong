@@ -1,13 +1,10 @@
 package com.sopt.dive.presentation.signup
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -17,115 +14,77 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import com.sopt.dive.R
 import com.sopt.dive.core.designsystem.component.DiveButton
 import com.sopt.dive.core.designsystem.component.LabelTextField
 import com.sopt.dive.core.designsystem.theme.DiveTheme
-import com.sopt.dive.core.local.datastore.UserData
-import com.sopt.dive.core.util.FormFieldValidator
 import com.sopt.dive.core.util.showToast
-import com.sopt.dive.presentation.DiveApplication
-import kotlinx.coroutines.launch
+import com.sopt.dive.presentation.signup.SignUpContract.SignUpSideEffect.SignUpSuccess
+import com.sopt.dive.presentation.signup.SignUpContract.SignUpSideEffect.ToastMessage
 
 @Composable
 fun SignUpRoute(
     navigateToSignIn: (String, String) -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: SignUpViewModel = hiltViewModel(),
 ) {
-    var userId by rememberSaveable { mutableStateOf("") }
-    val userIdError = if (userId.isNotBlank())
-        FormFieldValidator.validateId(userId) else ""
-
-    var password by rememberSaveable { mutableStateOf("") }
-    val passwordError = if (password.isNotBlank())
-        FormFieldValidator.validatePassword(password) else ""
-
-    var nickname by rememberSaveable { mutableStateOf("") }
-    val nicknameError = if (nickname.isNotBlank())
-        FormFieldValidator.validateNickname(nickname) else ""
-
-    var userMbti by rememberSaveable { mutableStateOf("") }
-    val userMbtiError = if (userMbti.isNotBlank())
-        FormFieldValidator.validateMbti(userMbti) else ""
-
-    val signUpEnabled = userId.isNotBlank() && userIdError.isBlank() &&
-            password.isNotBlank() && passwordError.isBlank() &&
-            nickname.isNotBlank() && nicknameError.isBlank() &&
-            userMbti.isNotBlank() && userMbtiError.isBlank()
-
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
+    val lifecycleOwner = LocalLifecycleOwner.current
 
-    val userDataStore = (context.applicationContext as DiveApplication).userDataStore
+    LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
+        viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
+            .collect { sideEffect ->
+                when (sideEffect) {
+                    is SignUpSuccess -> {
+                        context.showToast("회원가입에 성공하였습니다")
+                        navigateToSignIn(uiState.userId, uiState.password)
+                    }
+
+                    is ToastMessage -> {
+                        context.showToast(sideEffect.message)
+                    }
+                }
+            }
+    }
 
     SignUpScreen(
-        userId = userId,
-        userIdError = userIdError,
-        onUserIdChange = { userId = it },
-        password = password,
-        passwordError = passwordError,
-        onPasswordChange = { password = it },
-        nickname = nickname,
-        nicknameError = nicknameError,
-        onNicknameChange = { nickname = it },
-        userMbti = userMbti,
-        userMbtiError = userMbtiError,
-        onUserMbtiChange = { userMbti = it },
-        onSignUpClick = {
-            if (signUpEnabled)
-                coroutineScope.launch {
-                    val newUser = UserData(
-                        userId = userId,
-                        password = password,
-                        nickname = nickname,
-                        mbti = userMbti.uppercase(),
-                    )
-                    userDataStore.setUserData(newUser)
-                    navigateToSignIn(userId, password)
-                }
-            else with(context) { showToast(getString(R.string.error_text)) }
-        },
+        uiState = uiState,
+        onUserIdChange = viewModel::onUserIdChange,
+        onPasswordChange = viewModel::onPasswordChange,
+        onNicknameChange = viewModel::onNicknameChange,
+        onEmailChange = viewModel::onEmailChange,
+        onAgeChange = viewModel::onAgeChange,
+        onSignUpClick = viewModel::signUp,
         modifier = modifier,
     )
 }
 
 @Composable
 private fun SignUpScreen(
-    userId: String,
-    userIdError: String,
+    uiState: SignUpContract.SignUpState,
     onUserIdChange: (String) -> Unit,
-    password: String,
-    passwordError: String,
     onPasswordChange: (String) -> Unit,
-    nickname: String,
-    nicknameError: String,
     onNicknameChange: (String) -> Unit,
-    userMbti: String,
-    userMbtiError: String,
-    onUserMbtiChange: (String) -> Unit,
+    onEmailChange: (String) -> Unit,
+    onAgeChange: (String) -> Unit,
     onSignUpClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
-    val keyboardHeight = WindowInsets.ime.getBottom(LocalDensity.current)
-
-    LaunchedEffect(key1 = keyboardHeight) {
-        scrollState.scrollBy(keyboardHeight.toFloat())
-    }
 
     Column(
         modifier = modifier
@@ -155,34 +114,42 @@ private fun SignUpScreen(
             ) {
                 FormTextField(
                     label = stringResource(R.string.id_label),
-                    value = userId,
+                    value = uiState.userId,
                     onValueChange = onUserIdChange,
                     placeholder = stringResource(R.string.id_text_field_placeholder),
-                    errorText = userIdError,
+                    errorText = uiState.userIdError,
                 )
 
                 FormTextField(
                     label = stringResource(R.string.password_label),
-                    value = password,
+                    value = uiState.password,
                     onValueChange = onPasswordChange,
                     placeholder = stringResource(R.string.password_text_field_placeholder),
-                    errorText = passwordError,
+                    errorText = uiState.passwordError,
                 )
 
                 FormTextField(
                     label = stringResource(R.string.nickname_label),
-                    value = nickname,
+                    value = uiState.nickname,
                     onValueChange = onNicknameChange,
                     placeholder = stringResource(R.string.nickname_text_field_placeholder),
-                    errorText = nicknameError,
+                    errorText = uiState.nicknameError,
                 )
 
                 FormTextField(
-                    label = stringResource(R.string.mbti_label),
-                    value = userMbti,
-                    onValueChange = onUserMbtiChange,
-                    placeholder = stringResource(R.string.mbti_text_field_placeholder),
-                    errorText = userMbtiError,
+                    label = "EMAIL",
+                    value = uiState.email,
+                    onValueChange = onEmailChange,
+                    placeholder = "이메일을 입력해주세요",
+                    errorText = uiState.emailError,
+                )
+
+                FormTextField(
+                    label = "AGE",
+                    value = uiState.age,
+                    onValueChange = onAgeChange,
+                    placeholder = "나이를 입력해주세요",
+                    errorText = uiState.ageError,
                 )
             }
         }
@@ -231,18 +198,12 @@ private fun FormTextField(
 private fun SignUpPreview() {
     DiveTheme {
         SignUpScreen(
-            userId = "",
-            userIdError = "",
+            uiState = SignUpContract.SignUpState(),
             onUserIdChange = {},
-            password = "",
-            passwordError = "",
             onPasswordChange = {},
-            nickname = "",
-            nicknameError = "",
             onNicknameChange = {},
-            userMbti = "",
-            userMbtiError = "",
-            onUserMbtiChange = {},
+            onEmailChange = {},
+            onAgeChange = {},
             onSignUpClick = {},
         )
     }

@@ -1,31 +1,36 @@
 package com.sopt.dive.core.util
 
 object FormFieldValidator {
-    private val idRegex = "[^a-zA-Z0-9]".toRegex()
-    private val passwordRegex = "[^a-zA-Z0-9~!@#\$%^&*]".toRegex()
-    private val nicknameRegex = "[^가-힣a-zA-Z0-9]".toRegex()
-    private val mbtiRegex = "^[EeIi][NnSs][FfTt][JjPp]$".toRegex()
+    private val idRegex = Regex("^\\S{1,50}$")
+    private val passwordRegex =  Regex("^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^A-Za-z0-9])\\S{8,64}$")
+    private val nicknameRegex = Regex("^\\S.{0,99}$")
+    private val emailRegex = Regex("^(?=.{1,150}$)[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")
+
+    private val ageRegex = Regex("^[0-9]+$")
 
     fun validateId(id: String): String = when {
-        idRegex.containsMatchIn(id) -> "영문, 숫자 조합만 가능합니다."
-        id.length !in 6..10 -> "ID는 6~10글자여야 합니다."
+        !idRegex.matches(id) -> "공백 제외 최대 50자"
         else -> ""
     }
 
     fun validatePassword(password: String): String = when {
-        passwordRegex.containsMatchIn(password) -> "영문, 숫자, 특수문자(~!@#$%^&*) 조합만 가능합니다."
-        password.length !in 8..12 -> "비밀번호는 8~12글자여야 합니다."
+        !passwordRegex.matches(password) ->
+            "공백 제외 대소문자/숫자/특수문자 포함 8~64자"
         else -> ""
     }
 
     fun validateNickname(nickname: String): String = when {
-        nicknameRegex.containsMatchIn(nickname) -> "한글, 영문, 숫자 조합만 가능합니다"
-        nickname.isBlank() -> "닉네임을 입력해주세요."
+        !nicknameRegex.matches(nickname) -> "공백 제외 최대 100자"
         else -> ""
     }
 
-    fun validateMbti(mbti: String): String = when {
-        !mbtiRegex.matches(mbti) -> "정확한 MBTI(E|I N|S F|T J|P)를 입력해주세요"
+    fun validateEmail(email: String): String = when {
+        !emailRegex.matches(email) -> "올바른 이메일 형식이 아닙니다."
+        else -> ""
+    }
+
+    fun validateAge(age: String): String = when {
+        !ageRegex.matches(age) -> "0 이상의 정수"
         else -> ""
     }
 }
