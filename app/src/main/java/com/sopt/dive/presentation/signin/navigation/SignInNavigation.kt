@@ -4,7 +4,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
 import com.sopt.dive.core.common.navigation.Route
 import com.sopt.dive.presentation.signin.SignInRoute
 import kotlinx.serialization.Serializable
@@ -19,10 +18,8 @@ fun NavGraphBuilder.signInGraph(
     navigateToSignUp: () -> Unit,
     navigateToHome: () -> Unit,
 ) {
-    composable<SignIn> { navBackStackEntry ->
-        val authInfo = with(navBackStackEntry.toRoute<SignIn>()) { id to pw }
+    composable<SignIn> {
         SignInRoute(
-            authInfo = authInfo,
             navigateToSignUp = navigateToSignUp,
             navigateToHome = navigateToHome,
         )
