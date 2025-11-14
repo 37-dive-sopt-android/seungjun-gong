@@ -29,6 +29,7 @@ import com.sopt.dive.presentation.signin.navigation.navigateToSignIn
 import com.sopt.dive.presentation.signin.navigation.signInGraph
 import com.sopt.dive.presentation.signup.navigation.navigateToSignUp
 import com.sopt.dive.presentation.signup.navigation.signUpGraph
+import com.sopt.dive.presentation.splash.navigation.splashNavGraph
 import kotlinx.collections.immutable.toImmutableList
 
 @Composable
@@ -84,6 +85,18 @@ private fun MainNavHost(
         navController = navigator.navController,
         startDestination = navigator.startDestination,
     ) {
+        splashNavGraph(
+            navigateToSignIn = {
+                navigator.navController.navigateToSignIn(
+                    navOptions = clearBackStackNavOptions,
+                )
+            },
+            navigateToHome = {
+                navigator.navController.navigateToHome(
+                    navOptions = clearBackStackNavOptions,
+                )
+            },
+        )
         signInGraph(
             navigateToSignUp = navigator.navController::navigateToSignUp,
             navigateToHome = {

@@ -16,11 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,6 +25,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import com.sopt.dive.R
 import com.sopt.dive.core.designsystem.component.DiveButton
 import com.sopt.dive.core.designsystem.component.LabelTextField
@@ -37,61 +36,41 @@ import com.sopt.dive.core.designsystem.component.PasswordTextField
 import com.sopt.dive.core.designsystem.theme.DiveTheme
 import com.sopt.dive.core.util.noRippleClickable
 import com.sopt.dive.core.util.showToast
-import com.sopt.dive.presentation.DiveApplication
-import kotlinx.coroutines.launch
+import com.sopt.dive.presentation.signin.SignInContract.SignInSideEffect.SignInSuccess
+import com.sopt.dive.presentation.signin.SignInContract.SignInSideEffect.ToastMessage
 
 @Composable
 fun SignInRoute(
-    authInfo: Pair<String, String>,
     navigateToSignUp: () -> Unit,
     navigateToHome: () -> Unit,
+    viewModel: SignInViewModel = hiltViewModel(),
 ) {
-    var userId by rememberSaveable { mutableStateOf(authInfo.first) }
-    var password by rememberSaveable { mutableStateOf(authInfo.second) }
-    var isLoading by remember { mutableStateOf(true) }
-
-    val coroutineScope = rememberCoroutineScope()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
 
-    val userDataStore = (context.applicationContext as DiveApplication).userDataStore
+    LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
+        viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
+            .collect { sideEffect ->
+                when (sideEffect) {
+                    is SignInSuccess -> {
+                        context.showToast("로그인에 성공하였습니다")
+                        navigateToHome()
+                    }
 
-    // 자동 로그인
-    LaunchedEffect(Unit) {
-        val autoLoginStatus = userDataStore.getAutoLoginStatus()
-        if (autoLoginStatus) {
-            navigateToHome()
-        } else {
-            isLoading = false
-        }
-    }
-
-    if (isLoading) {
-        return
+                    is ToastMessage -> {
+                        context.showToast(sideEffect.message)
+                    }
+                }
+            }
     }
 
     SignInScreen(
-        userId = userId,
-        onUserIdChange = { userId = it },
-        password = password,
-        onPasswordChange = { password = it },
-        onSignInClick = {
-            if (userId.isBlank() || password.isBlank()) {
-                context.showToast("ID와 비밀번호를 입력해주세요")
-                return@SignInScreen
-            }
-
-            coroutineScope.launch {
-                val savedUserData = userDataStore.getUserData()
-
-                if (savedUserData != null && savedUserData.userId == userId && savedUserData.password == password) {
-                    context.showToast("로그인에 성공했습니다")
-                    userDataStore.setAutoLoginStatus(true)
-                    navigateToHome()
-                } else {
-                    context.showToast("ID 또는 비밀번호가 일치하지 않습니다")
-                }
-            }
-        },
+        userId = uiState.userId,
+        onUserIdChange = viewModel::updateUserId,
+        password = uiState.password,
+        onPasswordChange = viewModel::updatePassword,
+        onSignInClick = viewModel::signIn,
         onSignUpClick = navigateToSignUp,
     )
 }

@@ -1,10 +1,18 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.ktlint)
+}
+
+val properties = Properties().apply {
+    load(project.rootProject.file("local.properties").inputStream())
 }
 
 android {
@@ -19,6 +27,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "BASE_URL", properties["base.url"].toString())
+        buildConfigField("String", "REQRES_URL", properties["reqres.url"].toString())
     }
 
     buildTypes {
@@ -42,6 +52,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -61,6 +72,13 @@ dependencies {
     // Coil
     implementation(libs.coil.compose)
     implementation(libs.coil.network)
+
+    // Network
+    implementation(libs.bundles.retrofit)
+
+    // DI
+    implementation(libs.bundles.hilt)
+    ksp(libs.hilt.compiler)
 
     // Debug
     debugImplementation(libs.bundles.debug)
