@@ -1,7 +1,9 @@
 package com.sopt.dive.data.remote.dto
 
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class MemberDto(
     @SerialName("id")
     val userId: Long,
