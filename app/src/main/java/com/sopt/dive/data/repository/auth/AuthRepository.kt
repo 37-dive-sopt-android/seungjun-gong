@@ -17,7 +17,9 @@ interface AuthRepository {
         password: String,
     ): Result<SignInResult>
 
-    suspend fun deleteUser(
-        userId: Long,
-    ): Result<Unit>
+    suspend fun deleteUser(): Result<Unit>
+
+    suspend fun logout(): Result<Unit>
+
+    suspend fun  getAutoLoginState(): Boolean?
 }
