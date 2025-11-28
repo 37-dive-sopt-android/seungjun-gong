@@ -6,7 +6,6 @@ interface ProfileEditContract {
 
     @Immutable
     data class ProfileEditState(
-        val loadUiState: ProfileEditUiState = ProfileEditUiState.Idle,
         val userId: Long = 0L,
         val nickname: String = "",
         val nicknameError: String = "",
@@ -25,10 +24,4 @@ interface ProfileEditContract {
         data class ToastMessage(val message: String) : ProfileEditSideEffect
         data object NavigateToMy : ProfileEditSideEffect
     }
-}
-
-sealed interface ProfileEditUiState {
-    data object Idle : ProfileEditUiState
-    data object Loading : ProfileEditUiState
-    data class Failure(val message: String) : ProfileEditUiState
 }
