@@ -136,7 +136,7 @@ private fun ProfileEditScreen(
         }
 
         DiveButton(
-            buttonText = stringResource(R.string.sign_up_button_text),
+            buttonText = stringResource(R.string.profile_edit_button_text),
             onClick = onProfileEditClick,
             modifier = Modifier
                 .fillMaxWidth()
