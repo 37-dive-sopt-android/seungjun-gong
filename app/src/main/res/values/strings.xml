@@ -33,4 +33,7 @@
     <!--My -->
     <string name="my">My</string>
 
+    <!--Profile Edit  -->
+    <string name="profile_edit">프로필 수정</string>
+
 </resources>
