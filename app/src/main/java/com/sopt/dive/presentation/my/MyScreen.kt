@@ -1,10 +1,12 @@
+@file:Suppress("USELESS_IS_CHECK")
+
 package com.sopt.dive.presentation.my
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,10 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,53 +27,86 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import com.sopt.dive.R
 import com.sopt.dive.core.compositionlocal.LocalInnerPadding
 import com.sopt.dive.core.designsystem.component.DiveButton
 import com.sopt.dive.core.designsystem.theme.DiveTheme
-import com.sopt.dive.core.local.datastore.UserData
-import com.sopt.dive.presentation.DiveApplication
-import kotlinx.coroutines.launch
+import com.sopt.dive.core.model.profile.UserProfile
+import com.sopt.dive.core.util.showToast
+import com.sopt.dive.presentation.my.MyContract.MySideEffect.LogoutSuccess
+import com.sopt.dive.presentation.my.MyContract.MySideEffect.ToastMessage
+import com.sopt.dive.presentation.my.MyContract.MySideEffect.WithDrawSuccess
 
 @Composable
 fun MyRoute(
     navigateToSignIn: () -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: MyViewModel = hiltViewModel(),
 ) {
-    var savedUserData by remember { mutableStateOf<UserData?>(null) }
-    val coroutineScope = rememberCoroutineScope()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
 
-    val applicationContext = LocalContext.current.applicationContext
-    val userDataStore = (applicationContext as DiveApplication).userDataStore
+    LaunchedEffect(viewModel.sideEffect, lifecycleOwner) {
+        viewModel.sideEffect.flowWithLifecycle(lifecycle = lifecycleOwner.lifecycle)
+            .collect { sideEffect ->
+                when (sideEffect) {
+                    is LogoutSuccess -> {
+                        context.showToast("로그아웃 성공")
+                        navigateToSignIn()
+                    }
 
-    LaunchedEffect(Unit) {
-        savedUserData = userDataStore.getUserData()
+                    is WithDrawSuccess -> {
+                        context.showToast("회원탈퇴 성공")
+                        navigateToSignIn()
+                    }
+
+                    is ToastMessage -> {
+                        context.showToast(sideEffect.message)
+                    }
+                }
+            }
     }
 
-    savedUserData?.run {
-        MyScreen(
-            userId = userId,
-            password = password,
-            nickname = nickname,
-            mbti = mbti,
-            onLogoutClick = {
-                coroutineScope.launch {
-                    userDataStore.clearAutoLoginStatus()
-                    navigateToSignIn()
-                }
-            },
-            modifier = modifier,
-        )
+    when (val state = uiState.loadUiState) {
+        is MyUiState.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text("로딩 중..")
+            }
+        }
+
+        is MyUiState.Failure -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(state.message)
+            }
+        }
+
+        is MyUiState.Success -> {
+            MyScreen(
+                profile = state.profile,
+                onLogoutClick = viewModel::logout,
+                onWithDrawClick = viewModel::withDraw,
+                modifier = modifier,
+            )
+        }
     }
 }
 
 @Composable
 private fun MyScreen(
-    userId: String,
-    password: String,
-    nickname: String,
-    mbti: String,
+    profile: UserProfile,
     onLogoutClick: () -> Unit,
+    onWithDrawClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val innerPadding = LocalInnerPadding.current
@@ -101,12 +132,12 @@ private fun MyScreen(
             )
 
             Text(
-                text = "공승준"
+                text = profile.name
             )
         }
 
         Text(
-            text = "안녕하세요 공승준입니다",
+            text = "안녕하세요 ${profile.name}입니다",
             modifier = Modifier
                 .padding(
                     top = 10.dp,
@@ -121,32 +152,45 @@ private fun MyScreen(
         ) {
             LabelText(
                 label = stringResource(R.string.id_label),
-                text = userId,
+                text = profile.id.toString(),
             )
 
             LabelText(
-                label = stringResource(R.string.password_label),
-                text = password,
+                label = "USERNAME",
+                text = profile.username,
             )
 
             LabelText(
                 label = stringResource(R.string.nickname_label),
-                text = nickname,
+                text = profile.name,
             )
 
             LabelText(
-                label = stringResource(R.string.mbti_label),
-                text = mbti,
+                label = "EMAIL",
+                text = profile.email,
+            )
+
+            LabelText(
+                label = "AGE",
+                text = profile.age.toString(),
+            )
+
+            DiveButton(
+                buttonText = "로그아웃",
+                onClick = onLogoutClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 20.dp),
+            )
+
+            DiveButton(
+                buttonText = "회원탈퇴",
+                onClick = onWithDrawClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 20.dp),
             )
         }
-
-        Spacer(Modifier.weight(1f))
-
-        DiveButton(
-            buttonText = "로그아웃",
-            onClick = onLogoutClick,
-            modifier = Modifier.fillMaxWidth(),
-        )
     }
 }
 
@@ -176,11 +220,16 @@ private fun LabelText(
 private fun MyScreenPreview() {
     DiveTheme {
         MyScreen(
-            userId = "",
-            password = "",
-            nickname = "",
-            mbti = "",
+            profile = UserProfile(
+                id = 1,
+                username = "",
+                name = "홍길동",
+                email = "john.c.calhoun@examplepetstore.com",
+                age = 22,
+                status = "",
+            ),
             onLogoutClick = {},
+            onWithDrawClick = {},
         )
     }
 }
