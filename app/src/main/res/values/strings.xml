@@ -20,7 +20,7 @@
     <!--Button      -->
     <string name="sign_in_button_text">Welcome To SOPT</string>
     <string name="sign_up_button_text">회원가입하기</string>
-    <string name="profile_edit_button_text">회원가입하기</string>
+    <string name="profile_edit_button_text">수정하기</string>
 
     <!--Error    -->
     <string name="error_text">회원 정보를 입력해주세요</string>
