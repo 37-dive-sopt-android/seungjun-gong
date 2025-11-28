@@ -13,10 +13,12 @@ fun NavController.navigateToMy(navOptions: NavOptions? = null) =
 
 fun NavGraphBuilder.myGraph(
     navigateToSignIn: () -> Unit,
+    navigateToProfileEdit: (Long, String, String, Int) -> Unit,
 ) {
     composable<My> {
         MyRoute(
             navigateToSignIn = navigateToSignIn,
+            navigateToProfileEdit = navigateToProfileEdit,
         )
     }
 }
