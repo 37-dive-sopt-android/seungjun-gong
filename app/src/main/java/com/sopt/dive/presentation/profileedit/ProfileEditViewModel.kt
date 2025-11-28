@@ -113,7 +113,7 @@ class ProfileEditViewModel @Inject constructor(
 
             !isProfileChanged() -> {
                 viewModelScope.launch {
-                    _sideEffect.emit(ToastMessage("프로필 정보가 기존과 일치합니다.\n3수정해주세요."))
+                    _sideEffect.emit(ToastMessage("프로필 정보가 기존과 일치합니다.\n수정해주세요."))
                 }
                 return false
             }
