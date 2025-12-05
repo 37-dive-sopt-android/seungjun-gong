@@ -24,6 +24,8 @@ import com.sopt.dive.presentation.home.navigation.homeGraph
 import com.sopt.dive.presentation.home.navigation.navigateToHome
 import com.sopt.dive.presentation.main.component.MainBottomBar
 import com.sopt.dive.presentation.my.navigation.myGraph
+import com.sopt.dive.presentation.profileedit.navigation.navigateToProfileEdit
+import com.sopt.dive.presentation.profileedit.navigation.profileEditGraph
 import com.sopt.dive.presentation.search.navigation.searchGraph
 import com.sopt.dive.presentation.signin.navigation.navigateToSignIn
 import com.sopt.dive.presentation.signin.navigation.signInGraph
@@ -126,6 +128,11 @@ private fun MainNavHost(
                     navOptions = clearBackStackNavOptions,
                 )
             },
+            navigateToProfileEdit = navigator.navController::navigateToProfileEdit,
+        )
+
+        profileEditGraph(
+            navigateUp = navigator.navController::navigateUp,
         )
     }
 }
