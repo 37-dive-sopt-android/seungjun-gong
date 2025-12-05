@@ -79,9 +79,14 @@ class ProfileEditViewModel @Inject constructor(
 
     fun patchProfile() {
         val state = _uiState.value
+        val errorMessage = validateProfileEdit()
 
-        if (!isValidateEdit())
-            return@patchProfile
+        if (errorMessage != null) {
+            viewModelScope.launch {
+                _sideEffect.emit(ToastMessage(errorMessage))
+            }
+            return
+        }
 
         viewModelScope.launch {
             profileRepository.patchUserProfile(
@@ -99,25 +104,14 @@ class ProfileEditViewModel @Inject constructor(
         }
     }
 
-    private fun isValidateEdit(): Boolean {
+    private fun validateProfileEdit(): String? {
         val state = _uiState.value
 
-        when {
-            !state.editEnabled -> {
-                viewModelScope.launch {
-                    _sideEffect.emit(ToastMessage("프로필 정보를 입력해주세요."))
-                }
-                return false
-            }
-
-            !isProfileChanged() -> {
-                viewModelScope.launch {
-                    _sideEffect.emit(ToastMessage("프로필 정보가 기존과 일치합니다.\n수정해주세요."))
-                }
-                return false
-            }
+        return when {
+            !state.editEnabled -> "프로필 정보를 입력해주세요."
+            !isProfileChanged() -> "프로필 정보가 기존과 일치합니다.\n수정해주세요."
+            else -> null
         }
-        return true
     }
 
     private fun isProfileChanged(): Boolean {
