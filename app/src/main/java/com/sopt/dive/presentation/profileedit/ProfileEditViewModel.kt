@@ -80,7 +80,8 @@ class ProfileEditViewModel @Inject constructor(
     fun patchProfile() {
         val state = _uiState.value
 
-        if (!isValidateEdit()) return@patchProfile
+        if (!isValidateEdit())
+            return@patchProfile
 
         viewModelScope.launch {
             profileRepository.patchUserProfile(
@@ -90,9 +91,7 @@ class ProfileEditViewModel @Inject constructor(
                 age = state.age.toIntOrNull() ?: 0,
             )
                 .onSuccess {
-                    viewModelScope.launch {
-                        _sideEffect.emit(NavigateToMy)
-                    }
+                    _sideEffect.emit(NavigateToMy)
                 }.onFailure { error ->
                     Log.d("http", "${error.message}")
                     _sideEffect.emit(ToastMessage("프로필 수정 오류 ${error.message}"))
