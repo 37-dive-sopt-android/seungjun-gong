@@ -42,7 +42,7 @@ class ProfileEditViewModel @Inject constructor(
                 userId = savedProfile.userId,
                 nickname = savedProfile.name,
                 email = savedProfile.email,
-                age = savedProfile.age.toString(),
+                age = savedProfile.age,
             )
         }
     }

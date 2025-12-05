@@ -12,7 +12,7 @@ fun NavController.navigateToProfileEdit(
     userId: Long,
     name: String,
     email: String,
-    age: Int,
+    age: String,
     navOptions: NavOptions? = null,
 ) = navigate(
     route = ProfileEdit(
@@ -39,5 +39,5 @@ data class ProfileEdit(
     val userId: Long,
     val name: String,
     val email: String,
-    val age: Int,
+    val age: String,
 ) : Route

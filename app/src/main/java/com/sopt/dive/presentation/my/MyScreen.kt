@@ -50,7 +50,7 @@ import com.sopt.dive.presentation.my.MyContract.MySideEffect.WithDrawSuccess
 @Composable
 fun MyRoute(
     navigateToSignIn: () -> Unit,
-    navigateToProfileEdit: (Long, String, String, Int) -> Unit,
+    navigateToProfileEdit: (Long, String, String, String) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MyViewModel = hiltViewModel(),
 ) {
@@ -108,7 +108,7 @@ fun MyRoute(
                         state.profile.id,
                         state.profile.name,
                         state.profile.email,
-                        state.profile.age,
+                        state.profile.age.toString(),
                     )
                 },
                 modifier = modifier,
