@@ -26,7 +26,7 @@ class ProfileEditViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val profileRepository: ProfileRepository,
 ) : ViewModel() {
-    val savedProfile: ProfileEdit = savedStateHandle.toRoute<ProfileEdit>()
+    private val savedProfile: ProfileEdit = savedStateHandle.toRoute<ProfileEdit>()
 
     // This is Flow.
     private val _uiState = MutableStateFlow(ProfileEditState())
